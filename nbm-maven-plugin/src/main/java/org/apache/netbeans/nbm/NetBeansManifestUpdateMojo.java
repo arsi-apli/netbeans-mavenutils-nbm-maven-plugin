@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -659,6 +660,12 @@ public class NetBeansManifestUpdateMojo extends AbstractNbmMojo {
                                 "To fix the problem, add this module as direct dependency. "
                                 + "For OSGi bundles that are supposed to be wrapped in NetBeans modules, "
                                 + "use the useOSGiDependencies=false parameter");
+                        getLog().info("Add the following lines to the dependencies configuration:\n");
+                        getLog().info("<dependency>");
+                        getLog().info("  <groupId>" + wr.artifact.getGroupId() + "</groupId>");
+                        getLog().info("  <artifactId>" + wr.artifact.getArtifactId() + "</artifactId>");
+                        getLog().info("  <version>${netbeans.version}</version>");
+                        getLog().info("</dependency>");
                         deps.removeAll(classes[0]);
                     }
                     classes[1].retainAll(deps);
@@ -715,6 +722,13 @@ public class NetBeansManifestUpdateMojo extends AbstractNbmMojo {
 
         for (Artifact lib : libraries) {
             dependencyClasses.addAll(buildDependencyClasses(lib.getFile().getAbsolutePath()));
+        }
+        Iterator<String> iterator = dependencyClasses.iterator();
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            if(next!=null && !next.isEmpty() && next.startsWith("javax.")){
+                iterator.remove();
+            }
         }
         return dependencyClasses;
     }
@@ -791,6 +805,17 @@ public class NetBeansManifestUpdateMojo extends AbstractNbmMojo {
             if (!transitive && manifest.hasFriendPackages() && !manifest.getFriends().contains(cnb)) {
                 String message = "Module has friend dependency on " + manifest.getModule()
                         + " but is not listed as a friend.";
+                message += "Add the following lines to the plugin configuration:\n";
+                message += "<configuration>\n"
+                        + "    <moduleDependencies>\n"
+                        + "    ...\n"
+                        + "    <dependency>\n"
+                        + "       <id>" + dep.getId() + "</id>\n"
+                        + "       <type>impl</type>\n"
+                        + "    </dependency>\n"
+                        + "    ...\n"
+                        + "    </moduleDependencies>\n"
+                        + "</configuration>\n";
                 if (verifyRuntime.equalsIgnoreCase(FAIL)) {
                     throw new MojoFailureException(message);
                 } else {

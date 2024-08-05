@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,8 +49,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.apache.netbeans.nbm.model.NbmResource;
@@ -63,11 +64,11 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.util.FileUtils;
-import org.netbeans.nbbuild.CreateModuleXML;
-import org.netbeans.nbbuild.MakeListOfNBM;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.netbeans.nbbuild.CreateModuleXML;
 import org.netbeans.nbbuild.JHIndexer;
+import org.netbeans.nbbuild.MakeListOfNBM;
 
 /**
  * Create the NetBeans module directory structure, a prerequisite for nbm
@@ -296,7 +297,7 @@ public abstract class CreateNetBeansFileStructure
 
                 try (FileSystem fs = FileSystems.newFileSystem(moduleFile.toPath(), (ClassLoader) null)) {
                     try (BufferedOutputStream mfWriter
-                            = new BufferedOutputStream(Files.newOutputStream(fs.getPath(JarFile.MANIFEST_NAME)))) {
+                            = new BufferedOutputStream(Files.newOutputStream(fs.getPath(JarFile.MANIFEST_NAME), StandardOpenOption.CREATE))) {
                         m.write(mfWriter);
                     } catch (IOException ioex) {
                         throw new MojoExecutionException("Could not overwrite manifest entry", ioex);

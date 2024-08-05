@@ -27,7 +27,7 @@
 
     <groupId>org.apache.netbeans.utilities</groupId>
     <artifactId>utilities-parent</artifactId>
-    <version>14.3-SNAPSHOT</version>
+    <version>14.3-ZAPLI1</version>
     <packaging>pom</packaging>
 
     <name>Apache Netbeans Maven Utilities</name>
@@ -58,12 +58,18 @@
         <system>github</system>
         <url>https://github.com/apache/netbeans-mavenutils-nbm-maven-plugin/issues</url>
     </issueManagement>
-    <distributionManagement>
-        <site>
-            <id>netbeans.bits</id>
-            <url>https://bits.netbeans.org/mavenutilities/nbm-maven-plugin/</url>
-        </site>
-    </distributionManagement>
+        <distributionManagement>
+    <repository>
+        <id>ApliNAS</id>
+        <name>ApliNAS-releases</name>
+        <url>http://192.168.0.190:8081/artifactory/netbeans-zapli</url>
+    </repository>
+    <snapshotRepository>
+        <id>ApliNAS</id>
+        <name>ApliNAS-snapshots</name>
+        <url>http://192.168.0.190:8081/artifactory/netbeans-zapli</url>
+    </snapshotRepository>
+</distributionManagement>
 
     <properties>
         <!--  <mojo.java.target>1.6</mojo.java.target> -->

@@ -31,14 +31,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -173,7 +171,8 @@ public class CreateClusterAppMojo
         "org.openide.modules.os.Solaris",
         "org.openide.modules.ModuleFormat1",
         "org.openide.modules.ModuleFormat2",
-        "org.openide.modules.jre.JavaFX" //MNBMODULE-234
+        "org.openide.modules.jre.JavaFX", //MNBMODULE-234
+        "org.netbeans.modules.nbjavac",
     });
 
     @Component
