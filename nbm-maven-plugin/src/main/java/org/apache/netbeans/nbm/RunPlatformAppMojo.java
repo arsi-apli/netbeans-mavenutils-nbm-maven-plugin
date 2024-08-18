@@ -19,8 +19,10 @@ package org.apache.netbeans.nbm;
  * under the License.
  */
 import java.io.File;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -78,7 +80,7 @@ public class RunPlatformAppMojo extends AbstractMojo {
      *
      * @since 3.11
      */
-    @Parameter(property = "netbeans.run.params.debug")
+    @Parameter(property = "netbeans.run.params.debug", defaultValue = "")
     protected String debugAdditionalArguments;
 
     /**
@@ -155,6 +157,8 @@ public class RunPlatformAppMojo extends AbstractMojo {
             List<String> args = new ArrayList<>();
             args.add("--userdir");
             args.add(netbeansUserdir.getAbsolutePath());
+            args.add("--cachedir");
+            args.add(netbeansUserdir.getAbsolutePath());
             args.add("-J-Dnetbeans.logger.console=true");
             args.add("-J-ea");
             args.add("--branding");
@@ -186,6 +190,26 @@ public class RunPlatformAppMojo extends AbstractMojo {
         if ("true".equals(debugAdditionalArguments)) {
             return "-Xdebug -Xnoagent -Djava.compiler=NONE "
                     + "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005";
+        }
+        if(debugAdditionalArguments!=null && debugAdditionalArguments.contains("-J-Dnetbeans.patches")){
+            String[] split = debugAdditionalArguments.split(" ");
+            List<String> asList = new ArrayList<>(Arrays.asList(split));
+            Iterator<String> iterator = asList.iterator();
+            while (iterator.hasNext()) {
+                String next = iterator.next();
+                if(next.startsWith("-J-Dnetbeans.patches")){
+                    iterator.remove();
+                }
+            }
+            debugAdditionalArguments = "";
+           iterator = asList.iterator();
+            while (iterator.hasNext()) {
+                String next = iterator.next();
+                debugAdditionalArguments+=next;
+                if(iterator.hasNext()){
+                    debugAdditionalArguments+=" ";
+                }
+            }
         }
         return debugAdditionalArguments;
     }
